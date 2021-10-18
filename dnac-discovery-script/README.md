@@ -6,66 +6,129 @@
 
 **ToDo's:**
 
-- [ ] Consider writing your README first.  Doing so helps you clarify your intent, focuses your project, and it is much more fun to write documentation at the beginning of a project than at the end of one, see:
-    - [Readme Driven Development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html)
-    - [GitHub Guides: Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-- [ ] Ensure you put the [license and copyright header](./HEADER) at the top of all your source code files.
-- [ ] Be mindful of the third-party materials you use and ensure you follow Cisco's policies for creating and sharing Cisco Sample Code.
+- Any comments, Please email to me @ phphasuk@cisco.com
 
 ---
 
 ## Motivation
 
-Include a short description of the motivation behind the creation and maintenance of the project.  Explain **why** the project exists.
-
-## Show Me!
-
-What visual, if shown, clearly articulates the impact of what you have created?  In as concise a visualization as possible (code sample, CLI output, animated GIF, or screenshot) show what your project makes possible.
+In some specific use cases, the customer needs to add the discovery job per device. If there are many devices, it will be a cumbersome task to do it using GUI. The productive way to do it is with the automation script and API. This script intends to give the customer an example of using API to add the discovery jobs with specific steps and prerequisites. If the customers use the different processes, the customer can modify the script to support their intent.
 
 ## Features
 
-Include a succinct summary of the features/capabilities of your project.
-
-- Feature 1
-- Feature 2
-- Feature 3
+- Load the discovery parameters from the CSV file
+- Add the discovery jobs to DNAC
+- Check the added discovery tasks's status
+- Check the added discovery jobs's status
+- Get the discovery jobs's result, save them into the CSV file, and print them in the terminal screen
 
 ## Technologies & Frameworks Used
 
-This is Cisco Sample Code!  What Cisco and third-party technologies are you working with?  Are you using a coding framework or software stack?  A simple list will set the context for your project.
+This is Cisco Sample Code using Python Programming, supporting for DNAC Discovery feature.
 
 **Cisco Products & Services:**
 
-- Product
-- Service
+- DNA Center
 
-**Third-Party Products & Services:**
+## Prerequisite steps
 
-- Product
-- Service
+This script supports the specific discovery process using DNAC. Before running this script, we need the prerequisite steps below before adding the discovery tasks into DNAC.
 
-**Tools & Frameworks:**
+- Device Discovery Parameters in CSV file
 
-- Framework 1
-- Automation Tool 2
+## File Description
+
+File Description:
+- "dnac_config.py" – Configuration File (DNAC IP / Port Number)
+- "utils.py" – CSV utility functions
+- "dnac_restapi.py" – DNAC API functions
+- "dnac_discovery.py" – DNAC Discovery main script
+- "Requirements.txt" – Needed python modules
+- "discovery_data.csv" - Devices Discovery Parameters file in CSV format
+- "task_result.csv" - tasks's result output file in CSV format
+- "discovery_result.csv" - discovery jobs's result output file in CSV format
+
+## "discovery_data.csv" File
+Needed Parameters:
+- No: discovery id in the script ex. 1,2,3,...
+- name: discovery job's name in DNAC
+- enablePasswordList: device's enable password
+- ipAddressList: device's management ip address
+- passwordList: device's login user's password
+- snmpAuthPassphrase: snmp v3's Auth Passphrase
+- snmpAuthProtocol: snmp v3's Auth Protocol
+- snmpMode: snmp v3's Auth Mode
+- snmpPrivPassPhrase: snmp v3's Priviledge Pass Phrase
+- snmpPrivProtocol: snmp v3's Priviledge Protocol
+- snmpROCommunity: snmp's read only community
+- snmpRWCommunity: snmp's read/write community
+- userNameList: device's login username
+
+These data will be converted and put in the added discovery job API's payload as below.
+```
+{'cdpLevel': 1,
+ 'lldpLevel': 1,
+ 'discoveryType': 'SINGLE',
+ 'protocolOrder': 'ssh,telnet',
+ 'No': '2',
+ 'name': 'test109',
+ 'enablePasswordList': ['CiscoDNA1'],
+ 'ipAddressList': '192.168.200.231',
+ 'passwordList': ['C!sc0123'],
+ 'snmpAuthPassphrase': 'DNAC-ACCESS',
+ 'snmpAuthProtocol': 'SHA',
+ 'snmpMode': 'AUTHPRIV',
+ 'snmpPrivPassphrase': 'POD2-SNMPv3',
+ 'snmpPrivProtocol': 'AES128',
+ 'snmpROCommunity': 'public',
+ 'snmpRWCommunity': 'private',
+ 'userNameList': ['css']}
+```
+## Installation
+
+- Install the required python module
+```
+pip install -r requirements.txt
+```
+
+- Configure DNAC Server information in dnac_config.py
+```
+DNAC_IP = '<DNA's IP Address>'
+DNAC_PORT = '<DNAC's HTTP Port Number>"
+```
 
 ## Usage
 
-If people like your project, they will want to use it.  Show them how.
+Script usage arguments:
+```
+$ python dnac_discovery.py --help
 
-## Installation
+usage: dnac_discovery.py [-h] [--file FILE] [--mode MODE]
 
-Provide a step-by-step series of examples and explanations for how to install your project and its dependencies.
+Device Discovery.
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --file FILE  Devices Information in CSV format, using comma as delimiter
+  --mode MODE  add, delete
+```
+Adding the discovery jobs:
+```
+$ python dnac_discovery.py --mode add --file discovery_data.csv
+```
+Delete all discovery jobs:
+```
+$ python dnac_discovery.py --mode delete
+
+```
 
 ## Authors & Maintainers
-
-Smart people responsible for the creation and maintenance of this project:
 
 - Phithakkit Phasuk <phphasuk@cisco.com>
 
 ## Credits
 
-Give proper credit.  Inspired by another project or article?  Was your work made easier by a tutorial?  Include links to the people, projects, and resources that were influential in the creation of this project.
+- https://developer.cisco.com/
 
 ## License
 
