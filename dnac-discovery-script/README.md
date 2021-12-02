@@ -14,6 +14,8 @@
 
 In some specific use cases, the customer needs to add the discovery job per device. If there are many devices, it will be a cumbersome task to do it using GUI. The productive way to do it is with the automation script and API. This script intends to give the customer an example of using API to add the discovery jobs with specific steps and prerequisites. If the customers use the different processes, the customer can modify the script to support their intent.
 
+Adding "assign to site" function to move unassigned devices to site.
+
 ## Features
 
 - Load the discovery parameters from the CSV file
@@ -21,6 +23,7 @@ In some specific use cases, the customer needs to add the discovery job per devi
 - Check the added discovery tasks's status
 - Check the added discovery jobs's status
 - Get the discovery jobs's result, save them into the CSV file, and print them in the terminal screen
+- Move unassigned devices to site from the ip/site csv file
 
 ## Technologies & Frameworks Used
 
@@ -35,6 +38,7 @@ This is Cisco Sample Code using Python Programming, supporting for DNAC Discover
 This script supports the specific discovery process using DNAC. Before running this script, we need the prerequisite steps below before adding the discovery tasks into DNAC.
 
 - Device Discovery Parameters in CSV file
+- Device IP/Site parameters in CSV file
 
 ## File Description
 
@@ -47,6 +51,8 @@ File Description:
 - "discovery_data.csv" - Devices Discovery Parameters file in CSV format
 - "task_result.csv" - tasks's result output file in CSV format
 - "discovery_result.csv" - discovery jobs's result output file in CSV format
+- "assign_site_data.csv" - Device IP and Site parameters file in CSV format
+- "assign_site_result.csv" - assign site's result output file in CSV format
 
 ## "discovery_data.csv" File
 Needed Parameters:
@@ -84,6 +90,13 @@ These data will be converted and put in the added discovery job API's payload as
  'snmpRWCommunity': 'private',
  'userNameList': ['css']}
 ```
+
+## "assign_site_data.csv" File
+Needed Parameters:
+- No: assign id in the script ex. 1,2,3,...
+- ip: unassigned device's ip address in DNAC
+- site: site name in DNAC
+
 ## Installation
 
 - Install the required python module
@@ -110,7 +123,7 @@ Device Discovery.
 optional arguments:
   -h, --help   show this help message and exit
   --file FILE  Devices Information in CSV format, using comma as delimiter
-  --mode MODE  add, delete
+  --mode MODE  add, delete, assign
 ```
 Adding the discovery jobs:
 ```
@@ -120,6 +133,10 @@ Delete all discovery jobs:
 ```
 $ python dnac_discovery.py --mode delete
 
+```
+Assign deivce to site:
+```
+$ python dnac_discovery_py --mode assign --file assign_site_data.csv
 ```
 
 ## Authors & Maintainers
