@@ -157,6 +157,52 @@ class rest_api_lib:
             raise SystemExit()
 
 
+    def get_siteid_by_name(self, site_name):
+        headers = { 'x-auth-token': self.token,
+                    'content-type': 'application/json' }
+        url = f"https://{self.dnac_ip}:{self.dnac_port}/dna/intent/api/v1/site?name=" + site_name
+        try:
+            response = requests.get(url, headers=headers, verify=False)
+            response.raise_for_status()
+            info = response.json()['response']
+            logging.info(f'Got Site ID for: {site_name}')
+            logging.debug(f'info: {info}')
+            return info[0]['id']
+        except requests.exceptions.HTTPError as err:
+            logging.error(err)
+            raise SystemExit()
+
+
+    def assign_device_to_site(self, site_id, device_ip):
+        headers = { 'x-auth-token': self.token,
+                    'content-type': 'application/json' }
+        url = f"https://{self.dnac_ip}:{self.dnac_port}/dna/system/api/v1/site/{site_id}/device"
+        payload = { 'device': [ { 'ip': device_ip } ] }
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(payload), verify=False)
+            response.raise_for_status()
+            info = response.json()
+            executionStatusPath = info['executionStatusUrl']
+            url = f"https://{self.dnac_ip}:{self.dnac_port}" + executionStatusPath
+            while True:
+                response = requests.get(url, headers=headers, verify=False)
+                executionStatus = response.json()['status']
+                if executionStatus == 'SUCCESS':
+                    executionError = ''
+                    logging.debug(f'{device_ip}-{site_id}-{executionStatusPath}: {executionStatus}, {executionError}')
+                    break
+                elif executionStatus == 'FAILURE':
+                    executionError = response.json()['bapiError']
+                    logging.debug(f'{device_ip}-{site_id}-{executionStatusPath}: {executionStatus}, {executionError}')
+                    break
+                else:
+                    logging.debug(f'{device_ip}-{site_id}-{executionStatusPath}: {executionStatus}')
+            return executionStatus, executionError
+        except requests.exceptions.HTTPError as err:
+            logging.error(err)
+            raise SystemExit()
+
+
     def logout(self):
         """Logout from dnac"""
         headers = {'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-TOKEN': self.token}

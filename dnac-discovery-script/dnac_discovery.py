@@ -3,7 +3,7 @@
 
 """
 
-DNAC Discovery Script.
+DNAC Discovery and Site Assignment Script.
 
 Copyright (c) 2021 Cisco and/or its affiliates.
 
@@ -44,7 +44,7 @@ import logging
 def main():
     logging.basicConfig(
     #filename='application_run.log',
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s.%(msecs)03d %(levelname)s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
     logging.info('starting the program.')
@@ -55,7 +55,7 @@ def main():
     parser.add_argument('--file', dest='file',
                         help='Devices Information in CSV format, using comma as delimiter')
     parser.add_argument('--mode', dest='mode',
-                        help='add, delete')
+                        help='add, delete, assign')
     args = parser.parse_args()
     print('='*20)
     username = input('Username: ')
@@ -240,6 +240,22 @@ def main():
     elif args.mode == 'delete':
         logging.info('Deleting all discovery tasks.')
         dnac.delete_alldiscovery()
+        logging.info('logging out from DNAC.')
+        dnac.logout()
+    elif args.mode == 'assign':
+        nodes_list = csv_to_dict(args.file)
+        for item in nodes_list:
+            site_id = dnac.get_siteid_by_name(nodes_list[item]['site'])
+            device_ip = nodes_list[item]['ip']
+            nodes_list[item]['executionStatus'], nodes_list[item]['executionError'] = dnac.assign_device_to_site(site_id, device_ip)
+        print(json.dumps(nodes_list, indent=2))
+        logging.info('saving assign_site_result.csv.')
+        dict_to_csv(nodes_list,
+                    'assign_site_result.csv',
+                    'ip',
+                    'site',
+                    'executionStatus',
+                    'executionError')
         logging.info('logging out from DNAC.')
         dnac.logout()
 

@@ -1,0 +1,6 @@
+id,ip,site,executionStatus,executionError
+1,172.16.215.150,Global/United States/RTP/RTP30,FAILURE,{"device_ips":["172.16.215.150"],"result":"NCGR10078: 28dd04af-dd68-43e5-9773-5f090cefe518 is already associated with site - RTP50.Network Devices can be associated to only one site(Building/Floor).","status":"False"}
+2,172.16.215.150,Global/United States/RTP/RTP30,FAILURE,{"device_ips":["172.16.215.150"],"result":"NCGR10078: 28dd04af-dd68-43e5-9773-5f090cefe518 is already associated with site - RTP50.Network Devices can be associated to only one site(Building/Floor).","status":"False"}
+3,172.16.215.151,Global/United States/RTP/RTP30,FAILURE,{"message":"Device object not found for ip 172.16.215.151","status":"False"}
+4,172.16.215.150,Global/United States/RTP/RTP30,FAILURE,{"device_ips":["172.16.215.150"],"result":"NCGR10078: 28dd04af-dd68-43e5-9773-5f090cefe518 is already associated with site - RTP50.Network Devices can be associated to only one site(Building/Floor).","status":"False"}
+5,172.16.215.150,Global/United States/RTP/RTP50,SUCCESS,
